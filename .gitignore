@@ -1,4 +1,4 @@
 # Jetbrains IDE files
 .idea
 # sqlite3 database
-*.s3db
+#*.s3db
