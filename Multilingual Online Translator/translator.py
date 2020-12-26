@@ -4,40 +4,21 @@
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 import requests
+import sys
 
-language_dict = {
-    1: 'arabic',
-    2: 'german',
-    3: 'english',
-    4: 'spanish',
-    5: 'french',
-    6: 'hebrew',
-    7: 'japanese',
-    8: 'dutch',
-    9: 'polish',
-    10: 'portuguese',
-    11: 'romanian',
-    12: 'russian',
-    13: 'turkish'
-}
+languages = {'arabic', 'german', 'english', 'spanish', 'french', 'hebrew', 'japanese', 'dutch', 'polish', 'portuguese', 'romanian', 'russian', 'turkish'}
 
 
 def main(from_lang, to_lang, word):
-    # print("Hello, you're welcome to the translator. Translator supports:")
-    # i = 1
-    # for _, values in language_dict.items():
-    #     print(f"{i}. {values.capitalize()}")
-    #     i += 1
-
-    # from_lang = int(input("Type the number of your language:\n"))
-    # to_lang = int(input("Type the number of language you want to translate to"
-    #                     "or '0' to translate to all languages:\n"))
-    # word = input("Type the word you want to translate:\n")
-
-    # from_lang = language_dict[from_lang]
+    if from_lang not in languages:
+        print(f"Sorry, the program doesn't support {from_lang}")
+        return
+    elif to_lang not in languages and to_lang != "all":
+        print(f"Sorry, the program doesn't support {to_lang}")
+        return
 
     if to_lang == "all":
-        for _, lang in language_dict.items():
+        for lang in languages:
             if lang == from_lang:
                 continue
             translated_words, examples, example_translations = translate(from_lang, lang, word, 1)
@@ -49,8 +30,6 @@ def main(from_lang, to_lang, word):
                 f.write(f"\n{example_translations[0]}\n\n\n")
 
     else:
-        # to_lang = language_dict[to_lang]x
-
         translated_words, examples, example_translations = translate(from_lang, to_lang, word)
 
         with open(f"{word}.txt", 'a+', encoding='utf-8') as f:
@@ -70,10 +49,11 @@ def main(from_lang, to_lang, word):
 def translate(from_lang: str, to_lang: str, word: str, result_limit=None) -> (list, list, list):
     request_url = f"https://context.reverso.net/translation/{from_lang}-{to_lang}/{word}"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    r = requests.get(request_url, headers=headers)
-    if not r:
-        print(f"Please visit: {request_url}")
-        return
+    try:
+        r = requests.get(request_url, headers=headers)
+    except requests.ConnectionError:
+        print("Something wrong with your internet connection")
+        sys.exit(1)
 
     soup = BeautifulSoup(r.content, 'html.parser')
     # translated words
@@ -95,6 +75,10 @@ def translate(from_lang: str, to_lang: str, word: str, result_limit=None) -> (li
         examples = examples[:result_limit]
         example_translations = example_translations[:result_limit]
 
+    if len(translated_words) == 0:
+        print(f"Sorry, unable to find {word}")
+        sys.exit(1)
+
     return translated_words, examples, example_translations
 
 
@@ -111,4 +95,4 @@ if __name__ == '__main__':
     parser.add_argument("to_lang", help="Language to translate to")
     parser.add_argument("word", help="Word to translate")
     args = parser.parse_args()
-    main(args.from_lang, args.to_lang, args.word)
+    main(args.from_lang.lower(), args.to_lang.lower(), args.word)
