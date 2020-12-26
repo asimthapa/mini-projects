@@ -6,10 +6,21 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 
+# List of available languages
 languages = {'arabic', 'german', 'english', 'spanish', 'french', 'hebrew', 'japanese', 'dutch', 'polish', 'portuguese', 'romanian', 'russian', 'turkish'}
 
 
-def main(from_lang, to_lang, word):
+def main(from_lang: str, to_lang: str, word: str):
+    """ Main entry point.
+
+    Args:
+        from_lang: Language to translate the word from
+        to_lang: Language to translate the word to
+        word: Word to translate
+
+    Returns:
+        None
+    """
     if from_lang not in languages:
         print(f"Sorry, the program doesn't support {from_lang}")
         return
@@ -47,6 +58,18 @@ def main(from_lang, to_lang, word):
 
 
 def translate(from_lang: str, to_lang: str, word: str, result_limit=None) -> (list, list, list):
+    """ Translate the given word and give translated words with some examples
+
+    Args:
+        from_lang: Language to translate the word from
+        to_lang: Language to translate the word to
+        word: Word to translate
+        result_limit: limit the translation words and examples upto the limit
+
+    Returns:
+        (list, list, list): list of translated words, example sentences and translated example sentences
+
+    """
     request_url = f"https://context.reverso.net/translation/{from_lang}-{to_lang}/{word}"
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
@@ -82,7 +105,15 @@ def translate(from_lang: str, to_lang: str, word: str, result_limit=None) -> (li
     return translated_words, examples, example_translations
 
 
-def get_text_only(raw_texts: list):
+def get_text_only(raw_texts: list) -> list:
+    """ Strip out HTML tags and spaces from the raw string
+
+    Args:
+        raw_texts:  list of strings containing HTML tags
+
+    Returns:
+        list: list of text in between HTML tags
+    """
     refined_texts = []
     for raw_text in raw_texts:
         refined_texts.append(raw_text.text.strip())
@@ -90,7 +121,7 @@ def get_text_only(raw_texts: list):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
+    parser = ArgumentParser(description="Word Translator not a sentence translator.")
     parser.add_argument("from_lang", help="Language to translate from")
     parser.add_argument("to_lang", help="Language to translate to")
     parser.add_argument("word", help="Word to translate")
