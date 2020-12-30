@@ -195,7 +195,7 @@ def main():
         commands = commands.split()
         if commands[0] == "exit":
             return
-        if commands[0] != "start" or len(commands) < 3 or commands[1] not in legit_players or commands[2] not in legit_players:
+        if commands[0] != "start" or len(commands) != 3 or commands[1] not in legit_players or commands[2] not in legit_players:
             print("Bad parameters!")
             continue
 
