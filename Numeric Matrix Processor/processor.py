@@ -170,7 +170,7 @@ def transpose_matrix():
     input_matrix = []
     # Matrix that hold columns
     print("Enter matrix:")
-    for row in range(rows):
+    for _ in range(rows):
         matrix_row = []
         rows_val = input()
         for val in rows_val.split():

@@ -92,7 +92,6 @@ class TicTacToe:
     def hard_ai_move(self, player_piece, opponent_piece):
         _, row, col = self.minimax(player_piece, opponent_piece, -100, 100, True)
         self.board[row][col] = player_piece
-        return
 
     def draw_board(self):
         print("---------")

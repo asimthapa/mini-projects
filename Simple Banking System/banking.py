@@ -87,7 +87,6 @@ def log_in():
         new_income = income + get_balance(do_print=False)
         db_modify(f'UPDATE card SET balance = {new_income} WHERE number = {account_number}')
         print("Income was added!")
-        return
 
     def transfer():
         print("Enter card number: ")
@@ -120,7 +119,6 @@ def log_in():
         transfer_account_balance = transfer_account_info[0][1]
         db_modify(f'UPDATE card SET balance = {transfer_account_balance + transfer_amount} WHERE number = {transfer_account}')
         print("Success!")
-        return
 
     def close_account():
         modify_status = db_modify(f'DELETE FROM card WHERE number = {account_number}')
